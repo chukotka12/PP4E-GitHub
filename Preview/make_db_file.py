@@ -40,3 +40,7 @@ def loadDbase(dbfilename = dbfilename):
         db[key]= rec
         key = input()
     return db
+
+if __name__ == '__main__':
+    from initdata import db
+    storeDbase(db)
