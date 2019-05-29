@@ -21,7 +21,8 @@ def storeDbase(db, dbfilename=dbfilename):
         print(key, file=dbfile)
         for (name, value) in db[key].items():
             print(name + RECSEP + repr(value), file=dbfile)
-    print(ENDREC, file=dbfile)
+        print(ENDREC, file=dbfile)
+    print(ENDDB, file=dbfile)
     dbfile.close()
 
 def loadDbase(dbfilename = dbfilename):
@@ -31,10 +32,11 @@ def loadDbase(dbfilename = dbfilename):
     sys.stdin = dbfile
     db={}
     key = input()
-    while key !=ENDDB:
+    while key != ENDDB:
         rec={}
-        while field !=ENDREC:
-            name, value=field.split(RECSEP)
+        field = input()
+        while field != ENDREC:
+            name, value = field.split(RECSEP)
             rec[name]= eval(value)
             field=input()
         db[key]= rec
