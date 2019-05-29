@@ -1,0 +1,1 @@
+Test of using GitHub from PyCharm
