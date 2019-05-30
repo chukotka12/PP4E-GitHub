@@ -34,7 +34,7 @@ rowhtml='<tr><th>%s<td><input type=text name=%s value="%%(%s)s">\n'
 rowshtml=''
 for fieldname in fieldnames:
     rowshtml+=(rowhtml % ((fieldname,)*3))
-    replyhtml= replyhtml.replace('$ROWS$', rowshtml)
+replyhtml= replyhtml.replace('$ROWS$', rowshtml)
 
 def htmlize(adict):
     new = adict.copy()
