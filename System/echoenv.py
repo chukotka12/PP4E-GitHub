@@ -4,6 +4,6 @@
 """
 import os
 
-key = 'USERNAME' #'USER'
+key = 'USERNAME'  # 'USER'
 print('echoenv...', end=' ')
 print('Hello, ', os.environ[key])
