@@ -1,11 +1,11 @@
 """
 Чтение числа до символа EOF и возведение их в квадрат
 Пример:
-    python teststrems.py    - ввод с консоли
-    python teststrems.py < input.txt    - ввод из файла
+    python teststreams.py    - ввод с консоли
+    python teststreams.py < input.txt    - ввод из файла
     python teststreams.py < input.txt > output.txt - ввод из файла
                                         и вывод в файл
-    python teststrems.py < input.txt | more   - ввод из файла
+    python teststreams.py < input.txt | more   - ввод из файла
                                         и передача другой программе
 
 """
