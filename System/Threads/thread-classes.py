@@ -8,15 +8,27 @@
 """
 import threading
 
+
 class Mytread(threading.Thread):
     def __init__(self, myId, count, mutex):
-        self.myId=myId
-        self.count=count
-        self.mutex=mutex
+        self.myId = myId
+        self.count = count
+        self.mutex = mutex
         threading.Thread.__init__(self)
+
     def run(self):
         for i in range(self.count):
             with self.mutex:
                 print('[%s] => %s' % (self.myId, i))
 
-stdoutmutex=threading.Lock()
+
+stdoutmutex = threading.Lock()  # как и thread.allocate_lock()
+threads = []
+for i in range(10):
+    thread = Mytread(i, 100, stdoutmutex)
+    thread.start()
+    threads.append(thread)
+
+for thread in threads:
+    thread.join()  # ожидание завершения потока
+print('Main thread exiting.')
