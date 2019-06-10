@@ -12,33 +12,38 @@
 ВНИМАНИЕ: при обращении к функции print в потоках выполнения может потребоваться
 синхронизировать их, если есть вероятность перекрытия по времени;
 """
-from socket import socket, AF_INET, SOCK_STREAM # переносимый API сокетов
+from socket import socket, AF_INET, SOCK_STREAM  # переносимый API сокетов
 
-port=50008
-host='localhost'
+port = 50008
+host = 'localhost'
+
 
 def server():
-    sock=socket(AF_INET, SOCK_STREAM) #IP-адрес TCP-соединения
-    sock.bind(('', port))               # подключить к порту на заданной машине
-    sock.listen(5)                      # количество клиентов
+    sock = socket(AF_INET, SOCK_STREAM)  # IP-адрес TCP-соединения
+    sock.bind(('', port))  # подключить к порту на заданной машине
+    sock.listen(5)  # количество клиентов
 
     while True:
-        conn, addr=sock.accept()        #ожидание соединения с клиентом
-        data = conn.recv(1024)          # чтение данных от клиента
-        reply='server got: [%s]' % data #
-        conn.send(reply.encode())       # отправить данные клиенту
+        conn, addr = sock.accept()  # ожидание соединения с клиентом
+        data = conn.recv(1024)  # чтение данных от клиента
+        reply = 'server got: [%s]' % data  #
+        conn.send(reply.encode())  # отправить данные клиенту
+
+
 def client(name):
-    sock=socket(AF_INET, SOCK_STREAM)
+    sock = socket(AF_INET, SOCK_STREAM)
     sock.connect((host, port))
     sock.send(name.encode())
-    reply=sock.recv(1024)
+    reply = sock.recv(1024)
     sock.close()
-    print('client got: [%s]' % s reply)
+    print('client got: [%s]' % reply)
 
-if __name__=='__main__':
-    from  threading import Thread
-    sthread=Thread(target=server)
-    sthread.daemon=True
+
+if __name__ == '__main__':
+    from threading import Thread
+
+    sthread = Thread(target=server)
+    sthread.daemon = True
     sthread.start()
     for i in range(5):
-        Thread(target=client, args=('client%s' % i)).start()
+        Thread(target=client, args=('client%s' % i,)).start()
