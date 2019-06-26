@@ -8,7 +8,7 @@ Python для Cygwin
 import os
 
 def child():
-    print('Hello from child', os.getpgid())
+    print('Hello from child', os.getpid())
     os._exists(0)  # иначе произойдет возврат в родительский цикл
 
 def parent():
@@ -17,7 +17,7 @@ def parent():
         if newpid == 0:
             child()
         else:
-            print('Hello from parent', os.getpgid(), newpid)
+            print('Hello from parent', os.getpid(), newpid)
         if input()== 'q': break
 
 parent()
