@@ -48,7 +48,7 @@ class SimpleEditor(ScrolledText):
             if where:
                 print(where)
                 pastit = where + ('+%dc' % len(target))
-                self.text.tag_remove(SEL, '1.0', END)
+                # self.text.tag_remove(SEL, '1.0', END)
                 self.text.tag_add(SEL, where, pastit)
                 self.text.mark_set(INSERT, pastit)
                 self.text.see(INSERT)
