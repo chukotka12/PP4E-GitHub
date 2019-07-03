@@ -20,7 +20,5 @@ gridbox(root)
 
 packbox(root)
 
-
-
 Button(root, text='Quit', command=root.quit).pack()
 mainloop()

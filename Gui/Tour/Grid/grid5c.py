@@ -33,7 +33,7 @@ class SumGrid(Frame):
         Button(text='Print', command=self.onPrint).grid(row=0, column=1)
         Button(text='Clear', command=self.onClear).grid(row=0, column=2)
         Button(text='Load', command=self.onLoad).grid(row=0, column=3)
-        # Quitter(self).grid(row=0, column=4)
+        Quitter(self).grid(row=0, column=4)
 
     def onPrint(self):
         for row in self.rows:
@@ -62,10 +62,11 @@ class SumGrid(Frame):
         if file:
             for row in self.rows:
                 for col in row: col.grid_forget()  # clear interface
-            for sum in self.sums:
-                sum.grid_forget()
-            #? filelines = open(file, 'r').readlines()
+            for summ in self.sums: summ.grid_forget()
+
+             # filelines = open(file, 'r').readlines()
             filelines = open(file.name, 'r').readlines()
+
             self.numrow = len(filelines)
             self.numcol = len(filelines[0].split())
             self.makeWidgets(self.numrow, self.numcol)
@@ -83,7 +84,7 @@ if __name__ == '__main__':
     root = Tk()
     root.title('Summer Grid')
     if len(sys.argv) != 3:
-        SumGrid(root).grid() #pack()  # можно и grid
+        SumGrid(root).pack()  # можно и grid
     else:
         rows, cols = eval(sys.argv[1]), eval(sys.argv[2])
         SumGrid(root, rows, cols).pack()

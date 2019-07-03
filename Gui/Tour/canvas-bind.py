@@ -10,7 +10,7 @@ def onCanvasClick(event):
 
 def onObjectClick(event):
     print('Got object click', event.x, event.y, event.widget, end=' ')
-    print(event.widget.find_closest(event.xy, event.y))  # найти ID текстового объекта
+    print(event.widget.find_closest(event.x, event.y))  # найти ID текстового объекта
 
 
 root = Tk()

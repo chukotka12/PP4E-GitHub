@@ -11,7 +11,7 @@ from tkinter import *
 import canvasDraw, time
 
 
-class CanvasEventDemo(canvasDraw.CanvasEventDemo):
+class CanvasEventsDemo(canvasDraw.CanvasEventDemo):
     def __init__(self, parent=None):
         canvasDraw.CanvasEventDemo.__init__(self, parent)
         self.canvas.create_text(100, 10, text='Press <o> or <r> to move shapes')
@@ -21,7 +21,7 @@ class CanvasEventDemo(canvasDraw.CanvasEventDemo):
 
     def create_oval_tagged(self, x1, y1, x2, y2):
         objectId = self.canvas.create_oval(x1, y1, x2, y2)
-        self.canvas.itemconfig(objectId, tab='ovals', fill='blue')
+        self.canvas.itemconfig(objectId, tag='ovals', fill='blue')
         return objectId
 
     def create_rectangle_tagged(self, x1, y1, x2, y2):
@@ -46,5 +46,5 @@ class CanvasEventDemo(canvasDraw.CanvasEventDemo):
 
 
 if __name__ == '__main__':
-    CanvasEventDemo()
+    CanvasEventsDemo()
     mainloop()
