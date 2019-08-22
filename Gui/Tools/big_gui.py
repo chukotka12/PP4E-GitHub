@@ -53,8 +53,8 @@ class Hello(GuiMixin, GuiMakerWindowMenu):  # или GuiMakerFrameMenu
 
     def makeWidgets(self):
         middle = Label(self, text='Hello maker world',
-                       widht=40, height=10,
-                       relief=SUNKEN, cursor='pensil', bg='white')
+                       width=40, height=10,
+                       relief=SUNKEN, cursor='pencil', bg='white')
         middle.pack(expand=YES, fill=BOTH)
 
     def greeting(self):

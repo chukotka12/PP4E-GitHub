@@ -99,4 +99,67 @@ class GuiMaker(Frame):
 ##############################################################################
 # Специализированная версия для полосы меню главного окна Tk 8.0
 ##############################################################################
-GuiMakerFrameMenu = GuiMaker
+GuiMakerFrameMenu = GuiMaker  # используется для меню встраиваемых компонентов
+
+
+class GuiMakerWindowMenu(GuiMaker):  # используется для главного меню окна
+    def makeMenuBar(self):
+        menubar = Menu(self.master)
+        self.master.config(menu=menubar)
+
+        for (name, key, items) in self.menuBar:
+            pulldown = Menu(menubar)
+            self.addMenuItems(pulldown, items)
+            menubar.add_cascade(label=name, underline=key, menu=pulldown)
+
+        if self.helpButton:
+            if sys.platform[:3] == 'win':
+                menubar.add_command(label='Help', command=self.help)
+            else:
+                pulldown = Menu(menubar)  # В Linux требуется окно
+                pulldown.add_command(label='About', command=self.help)
+                menubar.add_cascade(label='Help', menu=pulldown)
+
+    ##############################################################################
+    # Реализация самотестирования, которая выполняется, если запустить модуль как
+    # самостоятельный сценарий: ‘python guimaker.py’
+    ##############################################################################
+
+
+if __name__ == '__main__':
+    from guimixin import GuiMixin
+
+    menuBar = [
+        ('File', 0,
+         [('Open', 0, lambda: 0),  # lambda:0 пустая операция
+          ('Quit', 0, sys.exit)]),
+        ('Edit', 0,
+         [('Cut', 0, lambda: 0),
+          ('Paste', 0, lambda: 0)])
+    ]
+    toolBar = [('Quit', sys.exit, {'side': LEFT})]
+
+
+    class TestAppFrameMenu(GuiMixin, GuiMakerFrameMenu):
+        def start(self):
+            self.menuBar = menuBar
+            self.toolBar = toolBar
+
+
+    class TestAppWindowMenu(GuiMixin, GuiMakerWindowMenu):
+        def start(self):
+            self.menuBar = menuBar
+            self.toolBar = toolBar
+
+
+    class TestAppWindowMenuBasic(GuiMakerWindowMenu):
+        def start(self):
+            self.menuBar = menuBar
+            self.toolBar = toolBar  # help из GuiMaker, а не из GuiMixin
+
+
+    root = Tk()
+    TestAppFrameMenu(Toplevel())
+    TestAppWindowMenu(Toplevel())
+    TestAppWindowMenuBasic(root)
+    root.mainloop()
