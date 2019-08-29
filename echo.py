@@ -1,2 +1,4 @@
-print('Spam')
-input('press Enter')
+import sys
+
+print(sys.version)
+input('Нажмите Enter')
