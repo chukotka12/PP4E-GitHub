@@ -14,7 +14,7 @@ from tkinter import Tk, Toplevel, Frame, YES, BOTH, RIDGE
 from tkinter.messagebox import showinfo, askyesno
 
 
-class window:
+class _window:
     """
     подмешиваемый класс, используется классами главных и всплывающих окон
     """
