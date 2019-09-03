@@ -33,14 +33,16 @@
 ##############################################################################
 """
 # запустить, даже если нет потоков # сейчас, если модуль threads
-try:                                # недоступен в стандартной библиотеке,
-    import _thread as thread    # возбуждает исключение ImportError
-except ImportError:             # и блокирует графический интерфейс
+try:  # недоступен в стандартной библиотеке,
+    import _thread as thread  # возбуждает исключение ImportError
+except ImportError:  # и блокирует графический интерфейс
     import _dummy_thread as thread  # тот же интерфейс без потоков
 # общая очередь
 # в глобальной области видимости, совместно используется потоками
-import  queue, sys
-threadQueue = queue.Queue(maxsize=0)    # infinite size
+import queue, sys
+
+threadQueue = queue.Queue(maxsize=0)  # infinite size
+
 
 ##############################################################################
 # ГЛАВНЫЙ ПОТОК – периодически проверяет очередь; выполняет действия,
@@ -60,16 +62,17 @@ threadQueue = queue.Queue(maxsize=0)    # infinite size
 # выполняется в главном потоке, он не препятствует завершению программы;
 ##############################################################################
 
-def threadChecker(widget, delayMsec=100, perEvent=1): # 10 раз/секб 1 таймер
+def threadChecker(widget, delayMsec=100, perEvent=1):  # 10 раз/секб 1 таймер
     for i in range(perEvent):
         try:
-            (callback, args)= threadQueue.get(block=False)
+            (callback, args) = threadQueue.get(block=False)
         except queue.Empty:
             break
         else:
             callback(*args)
     widget.after(delayMsec,
-                 lambda : threadChecker(widget, delayMsec, perEvent))
+                 lambda: threadChecker(widget, delayMsec, perEvent))
+
 
 ##############################################################################
 # НОВЫЙ ПОТОК – выполняет задание, помещает в очередь обработчик завершения и
@@ -89,22 +92,25 @@ def threadChecker(widget, delayMsec=100, perEvent=1): # 10 раз/секб 1 т�
 
 def threaded(action, args, context, onExit, onFail, onProgress):
     try:
-        if not onProgress: # ожидать окончания этого потока
-            action(*args) #предполагается, что в случае неудачи, будет
-                          # возбуждено исключение
+        if not onProgress:  # ожидать окончания этого потока
+            action(*args)  # предполагается, что в случае неудачи, будет
+            # возбуждено исключение
         else:
             def progress(*any):
-                threadQueue.put((onProgress, any+context))
+                threadQueue.put((onProgress, any + context))
+
             action(progress=progress, *args)
     except:
-        threadQueue.put((onFail, (sys.exc_info(),)+context))
+        threadQueue.put((onFail, (sys.exc_info(),) + context))
     else:
-        threadQueue.put((onExit,context))
+        threadQueue.put((onExit, context))
+
 
 def startThread(action, args, context, onExit, onFail, onProgress=None):
     thread.start_new_thread(
         threaded, (action, args, context, onExit, onFail, onProgress)
     )
+
 
 ##############################################################################
 # счетчик или флаг с поддержкой многопоточной модели выполнения: удобно
@@ -114,17 +120,21 @@ def startThread(action, args, context, onExit, onFail, onProgress=None):
 ##############################################################################
 class ThreadCounter:
     def __init__(self):
-        self.count=0
-        self.mutex=thread.allocate_lock() # или Threading.semaphore
+        self.count = 0
+        self.mutex = thread.allocate_lock()  # или Threading.semaphore
+
     def incr(self):
         self.mutex.acquire()
-        self.count+=1
+        self.count += 1
         self.mutex.release()
+
     def decr(self):
         self.mutex.acquire()
-        self.count-=1
+        self.count -= 1
         self.mutex.release()
-    def __len__(self):return self.count # True/False, если используется как флаг
+
+    def __len__(self): return self.count  # True/False, если используется как флаг
+
 
 ##############################################################################
 # реализация самотестирования: разбивает поток на основную операцию,
@@ -134,18 +144,51 @@ if __name__ == '__main__':
     import time
     from tkinter.scrolledtext import ScrolledText
 
-    def onEvent(i): # реализация порождения потоков
-        myname='thread-%s' % i
+
+    def onEvent(i):  # реализация порождения потоков
+        myname = 'thread-%s' % i
         startThread(
             action=threadaction,
-            args=(i,3),
-            context=(myname),
+            args=(i, 3),
+            context=(myname,),
             onExit=threadexit,
             onFail=threadfail,
             onProgress=threadprogress)
-        )
-        # основная операция, выполняемая потоком
-        def threadaction(id, reps, progress): # то что делате поток
-            for i in range(reps):
-                time.sleep(1)
-                if progress: progress(i)    # обработчик progressЖ: в очередь
+
+
+    # основная операция, выполняемая потоком
+    def threadaction(id, reps, progress):  # то что делает поток
+        for i in range(reps):
+            time.sleep(1)
+            if progress: progress(i)  # обработчик progressЖ: в очередь
+        if id % 2 == 1: raise Exception  # ошибочный номер: неудача
+
+
+    # обработчики завершения/информирования о ходе выполнения задания:
+    # передаются главному потоку через очередь
+    def threadexit(myname):
+        text.insert('end', '%s\texit\tn' % myname)
+        text.see('end')
+
+
+    def threadfail(exc_info, myname):
+        text.insert('end', '%s\tfail\t%s\n' % (myname, exc_info[0]))
+        text.see('end')
+
+
+    def threadprogress(count, myname):
+        text.insert('end', '%s\tprog\t%s\n' % (myname, count))
+        text.see('end')
+        text.update()  # допустимо: выполняется в гл.потоке
+
+
+    # создать графический интерфейс и запустить цикл обработки событий от
+    # таймера в главном потоке
+    # порождать группу рабочих потоков в ответ на каждый щелчок мышью:
+    # выполнение их может перекрываться во времени
+    text = ScrolledText()
+    text.pack()
+    threadChecker(text)  # запуск цикла обработки потоков
+    text.bind('<Button-1>',  # в 3.X list необходим для получения всех результатов
+              lambda event: list(map(onEvent, range(6))))  # map, для range - нет
+    text.mainloop()  # вход в цикл сообщений
